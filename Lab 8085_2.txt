@@ -1,0 +1,115 @@
+you have a list of odd and even numbers give sum of only even.
+Method rotate number and check least significant bit and check 0 or 1
+code is at 8000
+memory is at 8500-8504
+
+
+| Address | Instruction  | Opcode | Operand |
+| ------- | ------------ | ------ | ------- |
+| 8000    | LXI H, 8500H | 21     | 00 85   |
+| 8003    | MVI C, 05H   | 0E     | 05      |
+| 8005    | MVI B, 00H   | 06     | 00      |
+| 8007    | MOV A, M     | 7E     | —       |
+| 8008    | RRC          | 0F     | —       |
+| 8009    | JC 800FH     | DA     | 0F 80   |
+| 800C    | MOV A, M     | 7E     | —       |
+| 800D    | ADD B        | 80     | —       |
+| 800E    | MOV B, A     | 47     | —       |
+| 800F    | INX H        | 23     | —       |
+| 8010    | DCR C        | 0D     | —       |
+| 8011    | JNZ 8007H    | C2     | 07 80   |
+| 8014    | MOV A, B     | 78     | —       |
+| 8015    | STA 8600H    | 32     | 00 86   |
+| 8018    | HLT          | 76     | —       |
+
+
+
+
+
+
+you have list of 10 numbers at memory 9500 determine how many numbers have even parity 
+method 1 - rotate 8 times 
+method 2 - use jump
+method 3 - set 0 at a memory location add it and then corresponding parity flags will be generated
+
+
+METHOD 1: Rotate 8 Times
+| Addr | Instruction  | Opcode | Operand |
+| ---- | ------------ | ------ | ------- |
+| 8000 | LXI H, 9500H | 21     | 00 95   |
+| 8003 | MVI C, 0AH   | 0E     | 0A      |
+| 8005 | MVI B, 00H   | 06     | 00      |
+| 8007 | MOV A, M     | 7E     | —       |
+| 8008 | MVI D, 08H   | 16     | 08      |
+| 800A | MVI E, 00H   | 1E     | 00      |
+| 800C | RRC          | 0F     | —       |
+| 800D | JNC 8011H    | D2     | 11 80   |
+| 8010 | INR E        | 1C     | —       |
+| 8011 | DCR D        | 15     | —       |
+| 8012 | JNZ 800CH    | C2     | 0C 80   |
+| 8015 | MOV A, E     | 7B     | —       |
+| 8016 | ANI 01H      | E6     | 01      |
+| 8018 | JNZ 801CH    | C2     | 1C 80   |
+| 801B | INR B        | 04     | —       |
+| 801C | INX H        | 23     | —       |
+| 801D | DCR C        | 0D     | —       |
+| 801E | JNZ 8007H    | C2     | 07 80   |
+| 8021 | MOV A, B     | 78     | —       |
+| 8022 | STA 9600H    | 32     | 00 96   |
+| 8025 | HLT          | 76     | —       |
+
+METHOD 2: Using Parity Flag (JPE/JPO)
+| Addr | Instruction  | Opcode | Operand |
+| ---- | ------------ | ------ | ------- |
+| 8000 | LXI H, 9500H | 21     | 00 95   |
+| 8003 | MVI C, 0AH   | 0E     | 0A      |
+| 8005 | MVI B, 00H   | 06     | 00      |
+| 8007 | MOV A, M     | 7E     | —       |
+| 8008 | ORA A        | B7     | —       |
+| 8009 | JPO 800DH    | E2     | 0D 80   |
+| 800C | INR B        | 04     | —       |
+| 800D | INX H        | 23     | —       |
+| 800E | DCR C        | 0D     | —       |
+| 800F | JNZ 8007H    | C2     | 07 80   |
+| 8012 | MOV A, B     | 78     | —       |
+| 8013 | STA 9600H    | 32     | 00 96   |
+| 8016 | HLT          | 76     | —       |
+
+METHOD 3: Add with 0 (Generate Parity Flag)
+| Addr | Instruction  | Opcode | Operand |
+| ---- | ------------ | ------ | ------- |
+| 8000 | LXI H, 9500H | 21     | 00 95   |
+| 8003 | MVI C, 0AH   | 0E     | 0A      |
+| 8005 | MVI B, 00H   | 06     | 00      |
+| 8007 | MVI D, 00H   | 16     | 00      |
+| 8009 | MOV A, M     | 7E     | —       |
+| 800A | ADD D        | 82     | —       |
+| 800B | JPO 800FH    | E2     | 0F 80   |
+| 800E | INR B        | 04     | —       |
+| 800F | INX H        | 23     | —       |
+| 8010 | DCR C        | 0D     | —       |
+| 8011 | JNZ 8009H    | C2     | 09 80   |
+| 8014 | MOV A, B     | 78     | —       |
+| 8015 | STA 9600H    | 32     | 00 96   |
+| 8018 | HLT          | 76     | —       |
+
+
+
+you have a series of numbers determine which is largest use cmp
+
+| Address | Instruction  | Opcode | Operand |
+| ------- | ------------ | ------ | ------- |
+| 8000    | LXI H, 9500H | 21     | 00 95   |
+| 8003    | MVI C, 0AH   | 0E     | 0A      |
+| 8005    | MOV A, M     | 7E     | —       |
+| 8006    | INX H        | 23     | —       |
+| 8007    | DCR C        | 0D     | —       |
+| 8008    | LOOP: CMP M  | BE     | —       |
+| 8009    | JNC SKIP     | D2     | 0D 80   |
+| 800C    | MOV A, M     | 7E     | —       |
+| 800D    | SKIP: INX H  | 23     | —       |
+| 800E    | DCR C        | 0D     | —       |
+| 800F    | JNZ LOOP     | C2     | 08 80   |
+| 8012    | STA 9600H    | 32     | 00 96   |
+| 8015    | HLT          | 76     | —       |
+
